@@ -1,0 +1,180 @@
+---
+# 1. Shared volume for logs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs-volume
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# 2. Log Generator
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-generator
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-generator
+  template:
+    metadata:
+      labels:
+        app: log-generator
+    spec:
+      containers:
+      - name: log-generator
+        image: mingrammer/flog:0.4.3
+        args:
+        - --loop
+        - --format=json
+        - --number=10  # number of log lines per second
+        - --delay=100ms
+        - --output=/var/log/generated-logs.txt
+        - --overwrite
+        - --type=log
+        volumeMounts:
+        - name: log-storage
+          mountPath: /var/log
+      volumes:
+      - name: log-storage
+        persistentVolumeClaim:
+          claimName: logs-volume
+---
+# 3. Promtail to ship logs to Loki with JSON parsing
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: promtail
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: promtail
+  template:
+    metadata:
+      labels:
+        app: promtail
+    spec:
+      containers:
+      - name: promtail
+        image: grafana/promtail:3.4.3
+        args:
+        - -config.file=/etc/promtail/config.yaml
+        volumeMounts:
+        - name: log-storage
+          mountPath: /var/log
+        - name: promtail-config
+          mountPath: /etc/promtail
+      volumes:
+      - name: log-storage
+        persistentVolumeClaim:
+          claimName: logs-volume
+      - name: promtail-config
+        configMap:
+          name: promtail-config
+---
+# 4. Promtail ConfigMap with JSON parsing stage
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: monitoring
+data:
+  config.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+      log_level: "info"
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: generated-logs
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: generated-logs
+              __path__: /var/log/generated-logs.txt
+        pipeline_stages:
+          - json:
+              expressions:
+                http_method: 'method'
+                http_status: "status"
+          - labels:
+              http_method:
+              http_status:
+---
+# 5. Metrics Exporter
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-exporter
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-exporter
+  template:
+    metadata:
+      labels:
+        app: metrics-exporter
+    spec:
+      containers:
+      - name: metrics-exporter
+        image: rslim087/metrics-exporter:latest
+        ports:
+        - containerPort: 8082
+          name: metrics
+        volumeMounts:
+        - name: log-storage
+          mountPath: /var/log
+      volumes:
+      - name: log-storage
+        persistentVolumeClaim:
+          claimName: logs-volume
+---
+# 6. Metrics Exporter Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-exporter
+  namespace: monitoring
+  labels:
+    app: metrics-exporter
+spec:
+  ports:
+  - port: 8082
+    targetPort: 8082
+    name: metrics
+  selector:
+    app: metrics-exporter
+---
+# 7. ServiceMonitor for Prometheus to scrape the metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: metrics-exporter
+  namespace: monitoring
+  labels:
+    release: prometheus  # This should match your Prometheus selector
+spec:
+  selector:
+    matchLabels:
+      app: metrics-exporter
+  endpoints:
+  - port: metrics
+    interval: 15s

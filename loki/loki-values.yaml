@@ -1,0 +1,43 @@
+# Deployment mode: SingleBinary (simple), SimpleScalable (medium), Distributed (large)
+deploymentMode: SingleBinary
+
+# Authentication for multi-tenant setups
+loki:
+  auth_enabled: false
+
+# Number of replicas
+singleBinary:
+  replicas: 1
+
+# Component replicas (0 when using SingleBinary)
+write:
+  replicas: 0
+read:
+  replicas: 0
+backend:
+  replicas: 0
+
+# Common Loki configuration
+loki:
+  # Replication factor (1 for testing, 3+ for production)
+  commonConfig:
+    replication_factor: 1
+  
+  # Storage type: filesystem (local), s3, gcs, azure
+  storage:
+    type: filesystem
+    filesystem:
+      directory: /var/loki/chunks
+  
+  # Test schema for development
+  useTestSchema: true
+
+# Caching (disabled for testing)
+chunksCache:
+  enabled: false
+resultsCache:
+  enabled: false
+
+# Helm test
+test:
+  enabled: false

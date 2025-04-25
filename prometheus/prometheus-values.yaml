@@ -1,0 +1,26 @@
+# Grafana configuration
+grafana:
+  # Add Loki as a data source
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki-gateway.monitoring.svc.cluster.local
+      access: proxy
+
+# Production options (commented out):
+# Prometheus storage:
+# prometheus:
+#   prometheusSpec:
+#     retention: 15d
+#     storageSpec:
+#       volumeClaimTemplate:
+#         spec:
+#           storageClassName: fast
+#           resources:
+#             requests:
+#               storage: 50Gi
+
+# Alertmanager high availability:
+# alertmanager:
+#   alertmanagerSpec:
+#     replicas: 3
