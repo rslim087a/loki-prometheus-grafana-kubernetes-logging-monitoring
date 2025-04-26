@@ -14,7 +14,9 @@ To follow along with this tutorial, you'll need:
 ## Handy URLs
 
 - Loki Helm Repository: https://grafana.github.io/helm-charts/
+- Loki values.yaml: https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 - Prometheus Helm Repository: https://prometheus-community.github.io/helm-charts
+- Prometheus values.yaml: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 
 ## Installing Loki
 
