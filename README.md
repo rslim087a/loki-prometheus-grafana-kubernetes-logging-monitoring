@@ -11,6 +11,11 @@ To follow along with this tutorial, you'll need:
 
 **New to Kubernetes?** Check out our [Kubernetes Training course](https://kubernetestraining.io/)
 
+## Handy URLs
+
+- Helm Repository: https://grafana.github.io/helm-charts/
+- values.yaml: https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
+
 ## Installing Loki
 
 Installing loki if custom-values.yaml file isn't present.
