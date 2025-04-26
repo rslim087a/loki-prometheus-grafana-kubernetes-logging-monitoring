@@ -48,14 +48,14 @@ kubectl port-forward --namespace monitoring svc/loki-gateway 3100:80
 send test logs
 
 ```bash
-curl -H "Content-Type: application/json" -XPOST -s "http://localhost:3100/loki/api/v1/push" \
+curl -H "Content-Type: application/json" -H "X-Scope-OrgID: fake" -XPOST -s "http://localhost:3100/loki/api/v1/push" \
   --data-raw '{"streams": [{"stream": {"job": "test"}, "values": [["'$(date +%s)'000000000", "test log entry"]]}]}'
 ```
 
 query for the same logs
 
 ```bash
-curl "http://localhost:3100/loki/api/v1/query_range" --data-urlencode 'query={job="test"}'
+curl -H "X-Scope-OrgID: fake" "http://localhost:3100/loki/api/v1/query_range" --data-urlencode 'query={job="test"}'
 ```
 
 ## Installing kube-prometheus-stack
