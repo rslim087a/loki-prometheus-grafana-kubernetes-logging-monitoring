@@ -99,6 +99,7 @@ data:
 
     clients:
       - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+        tenant_id: fake  # This adds the X-Scope-OrgID header
 
     scrape_configs:
       - job_name: generated-logs
