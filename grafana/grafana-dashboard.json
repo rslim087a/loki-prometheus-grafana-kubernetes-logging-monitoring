@@ -752,7 +752,7 @@
       {
         "datasource": {
           "type": "loki",
-          "uid": "loki"
+          "uid": "Loki"
         },
         "fieldConfig": {
           "defaults": {
@@ -802,7 +802,7 @@
           {
             "datasource": {
               "type": "loki",
-              "uid": "loki"
+              "uid": "Loki"
             },
             "editorMode": "code",
             "expr": "sum by (http_status) (count_over_time({service_name=\"$service\"} |= \"$filter\" | json | __error__=\"\" [$__auto]))",
@@ -817,7 +817,7 @@
       {
         "datasource": {
           "type": "loki",
-          "uid": "loki"
+          "uid": "Loki"
         },
         "fieldConfig": {
           "defaults": {
@@ -895,7 +895,7 @@
           {
             "datasource": {
               "type": "loki",
-              "uid": "loki"
+              "uid": "Loki"
             },
             "editorMode": "code",
             "expr": "sum by (http_method) (count_over_time({service_name=\"$service\"} |= \"$filter\" | json | __error__=\"\" [$__auto]))",
@@ -910,7 +910,7 @@
       {
         "datasource": {
           "type": "loki",
-          "uid": "loki"
+          "uid": "Loki"
         },
         "gridPos": {
           "h": 10,
@@ -933,7 +933,7 @@
           {
             "datasource": {
               "type": "loki",
-              "uid": "loki"
+              "uid": "Loki"
             },
             "editorMode": "code",
             "expr": "{service_name=\"$service\"} |= \"$filter\" | json | http_status=~\"$status_filter\" | http_method=~\"$method_filter\"",
@@ -958,7 +958,7 @@
           },
           "datasource": {
             "type": "loki",
-            "uid": "loki"
+            "uid": "Loki"
           },
           "definition": "",
           "hide": 0,
