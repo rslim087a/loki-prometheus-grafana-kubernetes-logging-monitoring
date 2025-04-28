@@ -1,6 +1,6 @@
 # Loki Logs and Prometheus Metrics
 
-This repo contains all the code needed to follow along with our **[YouTube Tutorial](https://)** or **[Written Article](https://kubernetestraining.io/blog/loki-prometheus-grafana-kubernetes-logging-monitoring)**.
+This repo contains all the code needed to follow along with our **[YouTube Tutorial](https://youtu.be/0POI5E7Uzjo)** or **[Written Article](https://kubernetestraining.io/blog/loki-prometheus-grafana-kubernetes-logging-monitoring)**.
 
 ## Prerequisites
 
