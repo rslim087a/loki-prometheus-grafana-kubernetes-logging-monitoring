@@ -22,7 +22,7 @@ To follow along with this tutorial, you'll need:
 
 Installing loki if custom-values.yaml file isn't present 
 
-** Some parameters may be missing; best to refer to the video tutorial for complete setup instructions).**
+**Some parameters may be missing; best to refer to the video tutorial for complete setup instructions).**
 
 ```bash
 helm install loki grafana/loki --version 6.29.0 --namespace monitoring \
@@ -65,7 +65,7 @@ curl -H "X-Scope-OrgID: fake" "http://localhost:3100/loki/api/v1/query_range" --
 
 Installing kube-prometheus-stack if custom-values.yaml file isn't present. This adds loki as an additional data source.
 
-** Some parameters may be missing; best to refer to the video tutorial for complete setup instructions).**
+**Some parameters may be missing; best to refer to the video tutorial for complete setup instructions).**
 
 ```bash
 helm install prometheus prometheus-community/kube-prometheus-stack --version 45.7.1 \
